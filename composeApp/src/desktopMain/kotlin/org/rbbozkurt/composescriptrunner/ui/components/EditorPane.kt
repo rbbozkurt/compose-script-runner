@@ -2,7 +2,8 @@
 package org.rbbozkurt.composescriptrunner.ui.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.Text
@@ -33,22 +34,28 @@ private val keywordColors = mapOf(
 fun EditorPane(
     scriptText: String,
     onTextChange: (String) -> Unit,
-    modifier: Modifier = Modifier,
-    cursorPosition: Pair<Int, Int>? = null
-) {
-    var fieldValue by remember { mutableStateOf(TextFieldValue(scriptText)) }
+    cursorPosition: Pair<Int, Int>? = null,
+    modifier: Modifier = Modifier
 
-    fun moveCursorTo(line: Int, column: Int) {
-        val lines = fieldValue.text.lines()
-        val offset = lines.take(line - 1).sumOf { it.length + 1 } + (column - 1).coerceAtLeast(0)
-        fieldValue = fieldValue.copy(selection = TextRange(offset))
-    }
+    ) {
+    var fieldValue by remember { mutableStateOf(TextFieldValue(scriptText)) }
+    val focusRequester = remember { FocusRequester() }
 
     LaunchedEffect(cursorPosition) {
         cursorPosition?.let { (line, column) ->
-            moveCursorTo(line, column)
+            val lines = fieldValue.text.lines()
+            val offset = lines.take(line - 1).sumOf { it.length + 1 } + (column - 1).coerceAtLeast(0)
+
+            fieldValue = TextFieldValue(
+                text = fieldValue.text,
+                selection = TextRange(offset)
+            )
+
+            // Ensure the field regains focus so the cursor is visible
+            focusRequester.requestFocus()
         }
     }
+
 
     BasicTextField(
         value = fieldValue,
@@ -58,8 +65,9 @@ fun EditorPane(
         },
         modifier = modifier
             .fillMaxSize()
-            .background(Color.Black),
-        textStyle = TextStyle(color = Color.White, fontSize = 14.sp),
+            .background(Color.Black)
+            .focusRequester(focusRequester),
+        textStyle = TextStyle(color = Color.Gray, fontSize = 14.sp),
         cursorBrush = SolidColor(Color.White),
         decorationBox = { innerTextField ->
             innerTextField()
@@ -76,7 +84,7 @@ private fun highlightSyntax(text: String): AnnotatedString {
     val tokens = text.split(Regex("(?=\\W)|(?<=\\W)"))
     return buildAnnotatedString {
         tokens.forEach { token ->
-            val color = keywordColors[token] ?: Color.White
+            val color = keywordColors[token] ?: Color.Gray
                 withStyle(style = SpanStyle(color = color)) {
                     append(token)
             }
