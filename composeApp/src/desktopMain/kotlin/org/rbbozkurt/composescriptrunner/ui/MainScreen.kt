@@ -80,7 +80,7 @@ fun MainScreen() {
             Spacer(modifier = Modifier.height(16.dp))
             // Button row.
             ButtonRow(
-                isRunning = isRunning,
+                isEnabled = isRunning,
                 onRunClick = {
                     coroutineScope.launch {
                         isRunning = true
@@ -109,7 +109,7 @@ fun MainScreen() {
 
 @Composable
 fun ButtonRow(
-    isRunning: Boolean,
+    isEnabled: Boolean,
     onRunClick: () -> Unit,
     onResetClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -124,16 +124,11 @@ fun ButtonRow(
         // Run button: green neon background with a larger play icon.
         Button(
             onClick = onRunClick,
-            enabled = !isRunning,
-            colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF39FF14))
+            enabled = !isEnabled,
         ) {
-            if (!isRunning) {
-                Icon(
-                    imageVector = Icons.Filled.PlayArrow,
-                    contentDescription = stringResource(Res.string.btn_run_script),
-                    tint = Color.White,
-                    modifier = Modifier.size(32.dp)
-                )
+            if (!isEnabled) {
+                Text(text = stringResource(Res.string.btn_run_script))
+
             } else {
                 Text(text = stringResource(Res.string.btn_running))
             }
@@ -141,7 +136,7 @@ fun ButtonRow(
         // Reset button.
         Button(
             onClick = onResetClick,
-            enabled = !isRunning
+            enabled = !isEnabled
         ) {
             Text(text = stringResource(Res.string.btn_reset))
         }
