@@ -17,6 +17,9 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.sp
 
+/**
+ * A mapping of Kotlin language keywords to specific colors used for syntax highlighting.
+ */
 private val keywordColors = mapOf(
     "fun" to Color(0xFFFF9800),     // Vivid Orange
     "val" to Color(0xFF9C27B0),     // Vivid Purple
@@ -30,6 +33,17 @@ private val keywordColors = mapOf(
     "object" to Color(0xFF2196F3)   // Bright Blue
 )
 
+/**
+ * A composable text editor that provides syntax highlighting.
+ *
+ * This editor uses a [BasicTextField] to allow users to edit text, applies a black background,
+ * and displays syntax-highlighted text based on a set of known keywords.
+ *
+ * @param fieldValue The current [TextFieldValue] containing the text and selection information.
+ * @param onValueChange Callback invoked when the text changes.
+ * @param focusRequester A [FocusRequester] to control focus for the text field.
+ * @param modifier Optional [Modifier] for styling and layout adjustments.
+ */
 @Composable
 fun EditorPane(
     fieldValue: TextFieldValue,
@@ -57,6 +71,16 @@ fun EditorPane(
     )
 }
 
+/**
+ * Generates an [AnnotatedString] with syntax highlighting applied.
+ *
+ * This function splits the given [text] into tokens based on non-word boundaries and applies
+ * a [SpanStyle] with a specific color for tokens that match predefined keywords in [keywordColors].
+ * If a token is not found in the map, a default near-white color is used.
+ *
+ * @param text The input text to highlight.
+ * @return An [AnnotatedString] with the applied syntax highlighting.
+ */
 private fun highlightSyntax(text: String) =
     buildAnnotatedString {
         val tokens = text.split(Regex("(?=\\W)|(?<=\\W)"))

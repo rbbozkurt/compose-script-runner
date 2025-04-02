@@ -3,11 +3,7 @@ package org.rbbozkurt.composescriptrunner.ui
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Icon
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,6 +26,16 @@ import org.rbbozkurt.composescriptrunner.ui.components.EditorPane
 import org.rbbozkurt.composescriptrunner.ui.components.OutputPane
 import org.rbbozkurt.composescriptrunner.ui.state.OutputPaneUiState
 
+/**
+ * MainScreen hosts the primary UI of the Compose Script Runner application.
+ *
+ * It contains:
+ * - An editor pane for script input.
+ * - An output pane to display script execution results.
+ * - A row of buttons to run or reset the script.
+ *
+ * This composable also handles asynchronous script execution and cursor positioning.
+ */
 @Composable
 fun MainScreen() {
     var editorValue by remember { mutableStateOf(TextFieldValue("")) }
@@ -39,7 +45,7 @@ fun MainScreen() {
     val coroutineScope = rememberCoroutineScope()
     val focusRequester = remember { FocusRequester() }
 
-    // Handle updating the cursor position when requested.
+    // Update the text field selection (cursor position) when requested.
     LaunchedEffect(cursorPosition) {
         cursorPosition?.let { (line, column) ->
             val lines = editorValue.text.lines()
@@ -58,7 +64,7 @@ fun MainScreen() {
             .padding(16.dp)
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
-            // Editor and Output row.
+            // Row containing the editor and output panes.
             Row(modifier = Modifier.weight(1f)) {
                 Box(modifier = Modifier.weight(1f).fillMaxHeight()) {
                     EditorPane(
@@ -78,7 +84,7 @@ fun MainScreen() {
                 }
             }
             Spacer(modifier = Modifier.height(16.dp))
-            // Button row.
+            // Row containing the run and reset buttons.
             ButtonRow(
                 isEnabled = isRunning,
                 onRunClick = {
@@ -107,6 +113,17 @@ fun MainScreen() {
     }
 }
 
+/**
+ * ButtonRow displays a row containing the run and reset buttons.
+ *
+ * The run button executes the script and displays different text based on whether a script is running.
+ * The reset button clears the editor and resets the output pane.
+ *
+ * @param isEnabled Indicates whether the run button should be disabled (when a script is running).
+ * @param onRunClick Callback invoked when the run button is clicked.
+ * @param onResetClick Callback invoked when the reset button is clicked.
+ * @param modifier Optional [Modifier] for styling and layout.
+ */
 @Composable
 fun ButtonRow(
     isEnabled: Boolean,
@@ -121,19 +138,18 @@ fun ButtonRow(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // Run button: green neon background with a larger play icon.
+        // Run button: displays run or running text based on [isEnabled] state.
         Button(
             onClick = onRunClick,
             enabled = !isEnabled,
         ) {
             if (!isEnabled) {
                 Text(text = stringResource(Res.string.btn_run_script))
-
             } else {
                 Text(text = stringResource(Res.string.btn_running))
             }
         }
-        // Reset button.
+        // Reset button: resets the editor and output pane.
         Button(
             onClick = onResetClick,
             enabled = !isEnabled

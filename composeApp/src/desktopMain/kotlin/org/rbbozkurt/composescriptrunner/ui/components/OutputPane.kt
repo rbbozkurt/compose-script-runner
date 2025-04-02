@@ -27,6 +27,12 @@ import org.jetbrains.compose.resources.stringResource
 
 import org.rbbozkurt.composescriptrunner.ui.state.OutputPaneUiState
 
+/**
+ * Displays a waiting message when no script is running.
+ *
+ * @param modifier A [Modifier] for this composable.
+ * @param commonFontSize The font size to be used for the text.
+ */
 @Composable
 fun IdleOutput(
     modifier: Modifier = Modifier,
@@ -40,6 +46,12 @@ fun IdleOutput(
     )
 }
 
+/**
+ * Displays a message indicating that the script is running.
+ *
+ * @param modifier A [Modifier] for this composable.
+ * @param commonFontSize The font size to be used for the text.
+ */
 @Composable
 fun RunningOutput(
     modifier: Modifier = Modifier,
@@ -53,6 +65,16 @@ fun RunningOutput(
     )
 }
 
+/**
+ * Displays the successful script output.
+ *
+ * This composable shows the exit code and the output text.
+ *
+ * @param exitCode The exit code returned from the script execution.
+ * @param output The output text of the successful script run.
+ * @param modifier A [Modifier] for this composable.
+ * @param commonFontSize The font size to be used for the text.
+ */
 @Composable
 fun SuccessOutput(
     exitCode: Int,
@@ -76,6 +98,18 @@ fun SuccessOutput(
     }
 }
 
+/**
+ * Displays error output from script execution.
+ *
+ * If the error message contains a specific error format (extracted via regex),
+ * it shows a clickable error message that can navigate to the error location.
+ *
+ * @param message The full error message produced by the script execution.
+ * @param exitCode The exit code returned from the failed script execution.
+ * @param modifier A [Modifier] for this composable.
+ * @param commonFontSize The font size to be used for the text.
+ * @param onNavigateToError Callback invoked with line and column when the error message is clicked.
+ */
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun ErrorOutput(
@@ -100,11 +134,13 @@ fun ErrorOutput(
         }
         Spacer(modifier = Modifier.height(8.dp))
 
+        // Regex to parse error details from the message.
         val regex = Regex(""".*\.kts:(\d+):(\d+): error: (.*)""")
         val match = regex.find(message)
         if (match != null) {
             val (line, column, msg) = match.destructured
             var isHovered by remember { mutableStateOf(false) }
+            // Change background color on hover.
             val backgroundColor = if (isHovered) Color(0x33FFFFFF) else Color(0x1AFF5252)
             Text(
                 text = "script:$line:$column: error: $msg",
@@ -139,12 +175,23 @@ fun ErrorOutput(
     }
 }
 
+/**
+ * Displays the output pane containing the script execution output.
+ *
+ * This composable chooses between different output views based on the [OutputPaneUiState]
+ * (Idle, Running, Success, or Error) and displays the appropriate content.
+ *
+ * @param state The current state of the output pane.
+ * @param modifier A [Modifier] for this composable.
+ * @param onNavigateToError Callback invoked with line and column when an error message is clicked.
+ */
 @Composable
 fun OutputPane(
     state: OutputPaneUiState,
     modifier: Modifier = Modifier,
     onNavigateToError: (Int, Int) -> Unit
 ) {
+    // Define a common font size for consistency.
     val commonFontSize = 14.sp
 
     Column(
