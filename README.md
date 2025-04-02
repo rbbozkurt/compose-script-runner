@@ -27,21 +27,16 @@
 
 ```plaintext
 compose-script-runner/
-├── commonMain/
-│   ├── kotlin/
-│   │   └── org/rbbozkurt/composescriptrunner/
-│   │       ├── script/          # Script execution logic
-│   │       └── ui/              # UI components and state
-│   │           └── MainScreen.kt# Main UI for the app
-│   └── resources/
-│       └── values/
-│           └── strings.xml    # XML string resources for localization
 ├── desktopMain/
-│   └── kotlin/
-│       └── org/rbbozkurt/composescriptrunner/
-│           └── Main.kt        # Desktop entry point
-├── build.gradle.kts           # Gradle build configuration
-└── README.md                  # Project documentation
+│   ├── kotlin/
+│      └── org/rbbozkurt/composescriptrunner/
+│          ├── script/             # Script execution logic
+│          └── ui/                 # UI components and state
+│          │    └── MainScreen.kt  # Main UI for the app
+│          ├── App.kt
+│          └── main.kt             # entry point
+├── build.gradle.kts               # Gradle build configuration
+└── README.md                      # Project documentation
 ```
 
 ## Prerequisites
