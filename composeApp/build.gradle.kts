@@ -8,7 +8,8 @@ plugins {
 
 kotlin {
     jvm("desktop")
-    
+
+
     sourceSets {
         val desktopMain by getting
         
@@ -28,7 +29,6 @@ kotlin {
         }
     }
 }
-
 
 
 compose.desktop {

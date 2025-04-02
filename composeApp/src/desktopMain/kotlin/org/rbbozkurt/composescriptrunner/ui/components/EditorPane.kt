@@ -1,73 +1,50 @@
-// File: EditorPane.kt
 package org.rbbozkurt.composescriptrunner.ui.components
 
 import androidx.compose.foundation.background
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.text.*
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.sp
 
 private val keywordColors = mapOf(
-    "fun" to Color(0xFFCC7832),     // Orange
-    "val" to Color(0xFF9876AA),     // Purple
-    "var" to Color(0xFF9876AA),     // Purple
-    "if" to Color(0xFFCC7832),      // Orange
-    "else" to Color(0xFFCC7832),    // Orange
-    "for" to Color(0xFFCC7832),     // Orange
-    "while" to Color(0xFFCC7832),   // Orange
-    "return" to Color(0xFFCC7832),  // Orange
-    "class" to Color(0xFF0000FF),   // Blue
-    "object" to Color(0xFF0000FF)   // Blue
+    "fun" to Color(0xFFFF9800),     // Vivid Orange
+    "val" to Color(0xFF9C27B0),     // Vivid Purple
+    "var" to Color(0xFF9C27B0),     // Vivid Purple
+    "if" to Color(0xFFFF9800),      // Vivid Orange
+    "else" to Color(0xFFFF9800),    // Vivid Orange
+    "for" to Color(0xFFFF9800),     // Vivid Orange
+    "while" to Color(0xFFFF9800),   // Vivid Orange
+    "return" to Color(0xFFFF9800),  // Vivid Orange
+    "class" to Color(0xFF2196F3),   // Bright Blue
+    "object" to Color(0xFF2196F3)   // Bright Blue
 )
 
 @Composable
 fun EditorPane(
-    scriptText: String,
-    onTextChange: (String) -> Unit,
-    cursorPosition: Pair<Int, Int>? = null,
+    fieldValue: TextFieldValue,
+    onValueChange: (TextFieldValue) -> Unit,
+    focusRequester: FocusRequester,
     modifier: Modifier = Modifier
-
-    ) {
-    var fieldValue by remember { mutableStateOf(TextFieldValue(scriptText)) }
-    val focusRequester = remember { FocusRequester() }
-
-    LaunchedEffect(cursorPosition) {
-        cursorPosition?.let { (line, column) ->
-            val lines = fieldValue.text.lines()
-            val offset = lines.take(line - 1).sumOf { it.length + 1 } + (column - 1).coerceAtLeast(0)
-
-            fieldValue = TextFieldValue(
-                text = fieldValue.text,
-                selection = TextRange(offset)
-            )
-
-            // Ensure the field regains focus so the cursor is visible
-            focusRequester.requestFocus()
-        }
-    }
-
-
+) {
     BasicTextField(
         value = fieldValue,
-        onValueChange = {
-            fieldValue = it
-            onTextChange(it.text)
-        },
+        onValueChange = onValueChange,
         modifier = modifier
             .fillMaxSize()
             .background(Color.Black)
             .focusRequester(focusRequester),
-        textStyle = TextStyle(color = Color.Gray, fontSize = 14.sp),
+        textStyle = TextStyle(color = Color(0xFFEEEEEE), fontSize = 14.sp), // Near-white text
         cursorBrush = SolidColor(Color.White),
         decorationBox = { innerTextField ->
             innerTextField()
@@ -80,14 +57,13 @@ fun EditorPane(
     )
 }
 
-private fun highlightSyntax(text: String): AnnotatedString {
-    val tokens = text.split(Regex("(?=\\W)|(?<=\\W)"))
-    return buildAnnotatedString {
+private fun highlightSyntax(text: String) =
+    buildAnnotatedString {
+        val tokens = text.split(Regex("(?=\\W)|(?<=\\W)"))
         tokens.forEach { token ->
-            val color = keywordColors[token] ?: Color.Gray
-                withStyle(style = SpanStyle(color = color)) {
-                    append(token)
+            val color = keywordColors[token] ?: Color(0xFFEEEEEE)
+            withStyle(style = SpanStyle(color = color)) {
+                append(token)
             }
         }
     }
-}

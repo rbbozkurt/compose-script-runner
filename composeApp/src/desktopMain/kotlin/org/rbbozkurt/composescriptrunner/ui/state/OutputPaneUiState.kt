@@ -1,17 +1,17 @@
 package org.rbbozkurt.composescriptrunner.ui.state
 
-sealed class OutputUiState {
-    object Idle : OutputUiState()
+sealed class OutputPaneUiState {
+    object Idle : OutputPaneUiState()
 
-    object Running : OutputUiState()
+    object Running : OutputPaneUiState()
 
     data class Success(
         val output: String,
         val exitCode: Int
-    ) : OutputUiState()
+    ) : OutputPaneUiState()
 
     data class Error(
         val message: String,
         val exitCode: Int? = null
-    ) : OutputUiState()
+    ) : OutputPaneUiState()
 }

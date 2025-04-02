@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="waiting_message">Waiting to run script...</string>
+    <string name="script_running">Script is running...</string>
+    <string name="exit_code">Exit Code: %1$d</string>
+    <string name="error_occurred">Error occurred</string>
+    <string name="btn_run_script">Run Script</string>
+    <string name="btn_running">Running...</string>
+    <string name="btn_reset">Reset</string>
+    <!-- add other strings as needed -->
+</resources>
