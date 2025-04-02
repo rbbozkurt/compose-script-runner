@@ -12,23 +12,25 @@ import org.rbbozkurt.composescriptrunner.ui.state.OutputUiState
 fun MainScreen() {
     var scriptText by remember { mutableStateOf("") }
     var outputState by remember { mutableStateOf<OutputUiState>(OutputUiState.Idle) }
+    var cursorPosition by remember { mutableStateOf<Pair<Int, Int>?>(null) }
 
     Row(Modifier.fillMaxSize().padding(16.dp)) {
-        // Left: Editor
         Box(Modifier.weight(1f).fillMaxHeight()) {
             EditorPane(
                 scriptText = scriptText,
-                onTextChange = { scriptText = it }
+                onTextChange = { scriptText = it },
+                cursorPosition = cursorPosition
             )
-
         }
 
-        // Right: Future OutputPane or Controls
         Spacer(modifier = Modifier.width(16.dp))
-        // Output pane
+
         Box(Modifier.weight(1f).fillMaxHeight()) {
             OutputPane(
-                state = outputState
+                state = outputState,
+                onNavigateToError = { line, column ->
+                    cursorPosition = line to column
+                }
             )
         }
     }

@@ -1,21 +1,30 @@
+// File: EditorPane.kt
 package org.rbbozkurt.composescriptrunner.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.text.*
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import org.rbbozkurt.composescriptrunner.ui.state.OutputUiState
 
 @Composable
 fun OutputPane(
     state: OutputUiState,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onNavigateToError: ((Int, Int) -> Unit)
 ) {
     Column(
         modifier = modifier
@@ -26,10 +35,10 @@ fun OutputPane(
     ) {
         when (state) {
             is OutputUiState.Idle -> {
-                Text("💤 Waiting to run script...", color = Color.Gray)
+                Text("\uD83D\uDCA4 Waiting to run script...", color = Color.Gray)
             }
             is OutputUiState.Running -> {
-                Text("⏳ Script is running...", color = Color.Yellow)
+                Text("\u23F3 Script is running...", color = Color.Yellow)
             }
             is OutputUiState.Success -> {
                 Text("✅ Exit Code: ${state.exitCode}", color = Color.Green)
@@ -42,9 +51,23 @@ fun OutputPane(
                     Text("Exit Code: $it", color = Color.Red)
                 }
                 Spacer(Modifier.height(8.dp))
-                Text(state.message, color = Color.Red, fontFamily = FontFamily.Monospace)
+
+                val regex = Regex("script:(\\d+):(\\d+): error:(.*)")
+                val match = regex.find(state.message)
+                if (match != null) {
+                    val (line, column, msg) = match.destructured
+                    Text(
+                        text = "script:${line}:${column}: error:$msg",
+                        color = Color.Red,
+                        fontFamily = FontFamily.Monospace,
+                        modifier = Modifier.clickable {
+                            onNavigateToError(line.toInt(), column.toInt())
+                        }
+                    )
+                } else {
+                    Text(state.message, color = Color.Red, fontFamily = FontFamily.Monospace)
+                }
             }
         }
     }
 }
-

@@ -30,6 +30,7 @@ kotlin {
 }
 
 
+
 compose.desktop {
     application {
         mainClass = "org.rbbozkurt.composescriptrunner.MainKt"
