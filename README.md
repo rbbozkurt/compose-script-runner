@@ -80,6 +80,7 @@ cd compose-script-runner
 
 
 ## 📸 Demo
+![Compose Script Runner Demo](assets/compose_script_runner_demo.gif)
 
 
 ## 💡 Extensibility
