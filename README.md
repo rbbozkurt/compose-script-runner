@@ -69,7 +69,7 @@ cd compose-script-runner
    - Enter your Kotlin script in the editor pane.
 
 2. **Execute:**
-   - Click the green Run button (with a play icon) to execute your script.
+   - Click "Run Script" button to execute your script.
    - Live output and errors will appear in the output pane.
 
 3. **Navigate to Errors:**
